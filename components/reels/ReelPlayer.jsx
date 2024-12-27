@@ -1,0 +1,86 @@
+"use client"
+
+import React, { useEffect, useRef, useState } from 'react'
+import Video from '../reels/Video'
+import Quiz from '../reels/Quiz'
+//import { videosList } from '../data/videosData';
+// import { getVideoList } from '../services/api/video/controllers/listVideos';
+// import { findResolutions, maxResolution, videoUrlCreator } from '../utilities/resolutionExtractor';
+// import { userLikedVideos } from '../services/api/user/controllers/userLikedVideos';
+
+const ReelPlayer = ({ userid="",videos=[] }) => {
+  const videoContainerRef = useRef();
+  const [activeVideo, setActiveVideo] = useState(0);
+  const [videosList, setVideosList] = useState([...videos]);
+  const [videoIds, setVideoIds] = useState([]);
+  const [videosLikedList, setVideosLikedList] = useState([]);
+  
+  const handleScroll = (e) => {
+    //simple logic - just detect how far the present video is from the center of viewport
+
+    const videos = videoContainerRef.current.children;
+    let newActiveIndex = activeVideo;
+    let closestDis = Infinity;
+    for (let index = 0; index < videos.length; index++) {
+      const rect = videos[index].getBoundingClientRect();
+      const disFromCenter = Math.abs(rect.top + rect.height/2 - window.innerHeight/2);
+      if (disFromCenter < closestDis) {
+        closestDis = disFromCenter;
+        newActiveIndex = index;
+      }
+    }
+    if (newActiveIndex !== activeVideo) {
+      setActiveVideo(newActiveIndex);
+    }
+  }
+
+  useEffect(() => {
+    const container = videoContainerRef.current;
+    container.addEventListener("scroll",handleScroll);
+    return () => container.removeEventListener('scroll',handleScroll);
+  },[activeVideo]);
+
+  // useEffect(() => {
+  //   getVideoList().then(videoList => {
+  //     console.log(videoList);
+  //     let videoUrlRaw = [];
+  //     videoList.forEach(obj => {
+  //       //const nums = findResolutions(obj);
+  //       const resolution = obj.availableresolutions;
+  //       const guid = obj.videoid;
+  //       const likes = obj.likes;
+  //       const username = obj.username;
+  //       videoUrlRaw.push({guid,resolution,likes,username});
+  //       //setVideoUrlRaw(prev => ([...prev,{guid,resolution}]));
+  //       //if (nums.length) {
+  //         //const resolution = maxResolution(nums);
+  //         //videoUrlRaw.push({guid,resolution});
+  //       //}
+  //     });
+  //     const finalVideoUrl = videoUrlCreator(videoUrlRaw);
+  //     console.log(finalVideoUrl);
+  //     setVideosList(finalVideoUrl);
+  //     setVideoIds(videoUrlRaw);
+  //   });
+  // },[]);
+  
+  // useEffect(() => {
+  //   userLikedVideos(userid).then(likedvideos => {
+  //     console.log(likedvideos); 
+  //     if (likedvideos) setVideosLikedList(likedvideos)}); 
+  // }, [userid]);
+  
+  return (
+    <div ref={videoContainerRef} className='reelplayer_frame shadow h-[560px] overflow-scroll snap-y snap-mandatory scroll-smooth bg-neutral-900 ' style={{ aspectRatio:"9/16"}}>
+      {
+        videosList.map((video, ind) => {
+          if(ind%2 === 0) return <Video key={ind} videoid={video?.videoSrc} video={video} userid={userid} likes={5} username={"nishant"} videosLikedList={[]} active={activeVideo === ind} />
+          else return <Quiz key={ind} />
+        }
+        )
+      }
+    </div>
+  )
+}
+
+export default ReelPlayer
