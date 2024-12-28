@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Video from '../reels/Video'
 import Quiz from '../reels/Quiz'
+import { useSelector } from 'react-redux'
 //import { videosList } from '../data/videosData';
 // import { getVideoList } from '../services/api/video/controllers/listVideos';
 // import { findResolutions, maxResolution, videoUrlCreator } from '../utilities/resolutionExtractor';
@@ -40,42 +41,15 @@ const ReelPlayer = ({ userid="",videos=[] }) => {
     return () => container.removeEventListener('scroll',handleScroll);
   },[activeVideo]);
 
-  // useEffect(() => {
-  //   getVideoList().then(videoList => {
-  //     console.log(videoList);
-  //     let videoUrlRaw = [];
-  //     videoList.forEach(obj => {
-  //       //const nums = findResolutions(obj);
-  //       const resolution = obj.availableresolutions;
-  //       const guid = obj.videoid;
-  //       const likes = obj.likes;
-  //       const username = obj.username;
-  //       videoUrlRaw.push({guid,resolution,likes,username});
-  //       //setVideoUrlRaw(prev => ([...prev,{guid,resolution}]));
-  //       //if (nums.length) {
-  //         //const resolution = maxResolution(nums);
-  //         //videoUrlRaw.push({guid,resolution});
-  //       //}
-  //     });
-  //     const finalVideoUrl = videoUrlCreator(videoUrlRaw);
-  //     console.log(finalVideoUrl);
-  //     setVideosList(finalVideoUrl);
-  //     setVideoIds(videoUrlRaw);
-  //   });
-  // },[]);
-  
-  // useEffect(() => {
-  //   userLikedVideos(userid).then(likedvideos => {
-  //     console.log(likedvideos); 
-  //     if (likedvideos) setVideosLikedList(likedvideos)}); 
-  // }, [userid]);
+  const user = useSelector(state => state.user);
+  console.log("videos",videosList);
   
   return (
     <div ref={videoContainerRef} className='reelplayer_frame shadow h-[560px] overflow-scroll snap-y snap-mandatory scroll-smooth bg-neutral-900 ' style={{ aspectRatio:"9/16"}}>
       {
-        videosList.map((video, ind) => {
-          if(ind%2 === 0) return <Video key={ind} videoid={video?.videoSrc} video={video} userid={userid} likes={5} username={"nishant"} videosLikedList={[]} active={activeVideo === ind} />
-          else return <Quiz key={ind} />
+        videos.map(item => [item,item]).flat().map((video, ind) => {
+           if(ind%2 === 0) return <Video key={ind} videoid={video?.vid_id} video={video} userid={user.userId} likes={video?.likes_count} username={"nishant"} videosLikedList={[]} active={activeVideo === ind} />
+           else return <Quiz key={ind} question={video.question} explanation={video.explanation} option_1={video.option_1} option_2={video.option_2} option_3={video.option_3} option_4={video.option_4} correct_option={video.correct_option} />
         }
         )
       }

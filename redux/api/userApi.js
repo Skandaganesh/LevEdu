@@ -1,12 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { getLocalStorage } from "../../helpers/localStorageMethods";
 
-const baseURL = process.env.REACT_APP_BASE_URL;
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const userLogout = createAsyncThunk("logout", async () => {
     try {
         const token = getLocalStorage('appUserToken');
-        const res = await fetch(`${baseURL}/user/logout`,{
+        const role = getLocalStorage('appUserRole');
+        const res = await fetch(`${baseURL}/user/${role}/logout`,{
             method:"POST",
             headers:{
                 'Authorization': `Bearer ${token}`,
@@ -24,7 +25,8 @@ const userLogout = createAsyncThunk("logout", async () => {
 const getUserProfile = createAsyncThunk("userProfile", async () => {
     try {
         const token = getLocalStorage('appUserToken');
-        const res = await fetch(`${baseURL}/user/profile`,{
+        const role = getLocalStorage('appUserRole');
+        const res = await fetch(`${baseURL}/user/${role}/profile`,{
             method:"GET",
             headers:{
                 'Authorization': `Bearer ${token}`,

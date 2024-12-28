@@ -14,13 +14,15 @@ const userSlice = createSlice({
   initialState: initialUser,
   reducers: {
     login: (state, action) => {
-      const { token } = action.payload;
+      const { token,role } = action.payload;
       setLocalStorage('appUserToken', token);
+      setLocalStorage('appUserRole', role);
       state.auth = true;
     },
     logout: (state) => {
       clearLocalStorage('appUserToken');
-      state = { ...initialUser, auth: false };
+      clearLocalStorage('appUserRole');
+      state = { ...initialUser, auth: false, role: '' };
       return state;
     }
   },
@@ -34,13 +36,13 @@ const userSlice = createSlice({
       const { auth, data, statusCode } = action.payload;
       if (statusCode === 401) {
         clearLocalStorage('appUserToken');
-        clearLocalStorage('notifyToken');
+        clearLocalStorage('appUserRole');
         state = { ...initialUser, auth: false };
         return state;
       }else {
         if (auth) {
-          const { _id, ...rest } = data;
-          return { ...state, ...rest, userId: _id, auth: auth }
+          const { userId, ...rest } = data;
+          return { ...state, ...rest, userId: userId, auth: auth }
         } else return { ...state, auth: auth }
       }
     });

@@ -15,8 +15,8 @@ import CreateQuiz from '@/components/upload/CreateQuiz'
 const page = () => {
 
   const initFormData = {
-    flashcard_id: '5',
-    quiz_id: '6',
+    flashcard_id: '',
+    quiz_id: '',
   }
 
   const [formData, setFormData] = useState(initFormData);

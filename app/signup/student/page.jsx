@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import useFetch from '../../../hooks/useFetch';
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", 
@@ -9,60 +10,61 @@ const indianStates = [
   "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", 
   "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", 
   "Uttarakhand", "West Bengal", "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", 
-  "Lakshadweep", "Delhi", "Puducherry", "Other"
+  "Lakshadweep", "Delhi", "Puducherry"
 ];
 
-const EducatorSignUp = () => {
-  const [educatorData, setEducatorData] = useState({
+const StudentSignUp = () => {
+  const [studentData, setStudentData] = useState({
     name: "",
     email: "",
     password: "",
-    phone: "",
     city: "",
     street: "",
     state: "",
-    degree: "",
-    experience: 0,
-    language: "",
+    standard: "",
   });
 
   const router = useRouter();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEducatorData((prevData) => ({
+    setStudentData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const createData = useFetch();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/api/signup/educator", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(educatorData),
-    });
-
-    if (response.ok) {
-      router.push("/educator-dashboard");
-    } else {
-      alert("Failed to sign up. Please try again.");
+    const payload = {
+      stud_name:studentData.name,
+        stud_email:studentData.email,
+        stud_password:studentData.password,
+        city:studentData.city,
+        street:studentData.street,
+        state:studentData.state,
+        stand_id:studentData.standard
     }
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const res = await createData(baseUrl+'/user/student/signup', 'POST', payload, 201);
+
+    if (!res) {
+      throw new Error('An error occured while creating educator');
+    }else router.push('/login');
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Educator Sign Up</h2>
+        <h2 className="text-2xl font-bold mb-4">Student Sign Up</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             name="name"
-            value={educatorData.name}
+            value={studentData.name}
             onChange={handleInputChange}
             placeholder="Full Name"
             className="w-full p-3 border rounded-md"
@@ -71,7 +73,7 @@ const EducatorSignUp = () => {
           <input
             type="email"
             name="email"
-            value={educatorData.email}
+            value={studentData.email}
             onChange={handleInputChange}
             placeholder="Email"
             className="w-full p-3 border rounded-md"
@@ -80,7 +82,7 @@ const EducatorSignUp = () => {
           <input
             type="password"
             name="password"
-            value={educatorData.password}
+            value={studentData.password}
             onChange={handleInputChange}
             placeholder="Password"
             className="w-full p-3 border rounded-md"
@@ -88,17 +90,8 @@ const EducatorSignUp = () => {
           />
           <input
             type="text"
-            name="phone"
-            value={educatorData.phone}
-            onChange={handleInputChange}
-            placeholder="Phone"
-            className="w-full p-3 border rounded-md"
-            required
-          />
-          <input
-            type="text"
             name="city"
-            value={educatorData.city}
+            value={studentData.city}
             onChange={handleInputChange}
             placeholder="City"
             className="w-full p-3 border rounded-md"
@@ -107,7 +100,7 @@ const EducatorSignUp = () => {
           <input
             type="text"
             name="street"
-            value={educatorData.street}
+            value={studentData.street}
             onChange={handleInputChange}
             placeholder="Street"
             className="w-full p-3 border rounded-md"
@@ -115,7 +108,7 @@ const EducatorSignUp = () => {
           />
           <select
             name="state"
-            value={educatorData.state}
+            value={studentData.state}
             onChange={handleInputChange}
             className="w-full p-3 border rounded-md"
             required
@@ -126,32 +119,19 @@ const EducatorSignUp = () => {
               </option>
             ))}
           </select>
-          <input
-            type="text"
-            name="degree"
-            value={educatorData.degree}
+          <select
+            name="standard"
+            value={studentData.standard}
             onChange={handleInputChange}
-            placeholder="Highest Degree"
             className="w-full p-3 border rounded-md"
             required
-          />
-          <input
-            type="number"
-            name="experience"
-            value={educatorData.experience}
-            onChange={handleInputChange}
-            placeholder="Experience (Years)"
-            className="w-full p-3 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="language"
-            value={educatorData.language}
-            onChange={handleInputChange}
-            placeholder="Languages Known"
-            className="w-full p-3 border rounded-md"
-          />
+          >
+            <option value="">Select Class</option>
+            <option value="1">Standard 8</option>
+            <option value="1">Standard 9</option>
+            <option value="1">Standard 10</option>
+            {/* Add other standards as per your SQL schema */}
+          </select>
           <button
             type="submit"
             className="w-full bg-blue-500 text-white p-3 rounded-md"
@@ -164,4 +144,4 @@ const EducatorSignUp = () => {
   );
 };
 
-export default EducatorSignUp;
+export default StudentSignUp;

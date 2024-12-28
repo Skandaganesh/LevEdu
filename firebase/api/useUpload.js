@@ -12,7 +12,7 @@ const useUpload = () => {
 //   };
 
   const handleUpload = async (file) => {
-    if (!file) return;
+    if (!file) return "";
 
     const storageRef = ref(storage, `files/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -31,10 +31,11 @@ const useUpload = () => {
           setUrl(downloadURL);
           console.log("File available at:", downloadURL);
         });
-      }
+      } 
     );
+    return "";
   };
-  return { progress, url, handleUpload };
+  return {handleUpload, progress, url};
 };
 
 export default useUpload;

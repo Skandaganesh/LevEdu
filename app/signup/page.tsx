@@ -18,7 +18,7 @@ const SignUpPage = () => {
       setLoading(true); // Start loading animation
       setTimeout(() => {
         router.push(`/signup/${selectedUserType}`);
-      }, ); // Simulate delay before navigation
+      },500); // Simulate delay before navigation
     }
   }, [selectedUserType, router]);
 

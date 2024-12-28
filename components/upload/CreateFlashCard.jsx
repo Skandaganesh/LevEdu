@@ -41,7 +41,7 @@ const CreateFlashCard = ({ getFlashCardID=()=>{} }) => {
       setLoading(true);
       
       const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-      console.log(baseUrl);
+      // console.log(baseUrl);
       
       const res = await createData(baseUrl+'/flashcard', 'POST', formData, 201);
       console.log(res);

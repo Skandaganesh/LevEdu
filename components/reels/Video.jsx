@@ -5,6 +5,7 @@ import './styles/video.css'
 import useVideo from '@/hooks/useVideo';
 import Link from "next/link";
 // import { updateLikes } from '../services/api/video/controllers/updateLikes';
+import FlashCard from '@/components/reels/FlashCard';
 
 const Video = ({ video, active, videoid, userid, likes, username, videosLikedList }) => {
 
@@ -80,18 +81,20 @@ const Video = ({ video, active, videoid, userid, likes, username, videosLikedLis
         }
     };
 
+    console.log(video);
+    
     return (
         <div className='w-full h-full snap-start relative rounded overflow-hidden' onDoubleClick={handleLikes} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
             {showHello ?
                 <div
-                    className="w-full h-full flex items-center justify-center bg-black text-white"
+                    className="w-full h-full flex items-center justify-center bg-white text-black p-4"
                     // onClick={handleCloseHello}
                 >
-                    <h1 className="text-3xl font-bold">Hello</h1>
+                    <FlashCard description={video.description} rsrc_url={video.rsrc_url} />
                 </div>
                 : <>
                     {/* video */}
-                    <video ref={videoRef} onClick={playVideo} className='w-full h-full object-fill z-10 relative' src={video.videoSrc} onTimeUpdate={handleTimeLineProgress} loop></video>
+                    <video ref={videoRef} onClick={playVideo} className='w-full h-full object-fill z-10 relative' src={video.vid_url} onTimeUpdate={handleTimeLineProgress} loop></video>
                     {/* video elements container */}
                     <div className='absolute top-0 bottom-0 right-0 left-0 bg-transparent text-white'>
                         {/* dropdown box */}
